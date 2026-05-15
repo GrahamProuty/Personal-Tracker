@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graham Prouty Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-mark">GP</div>
+            <div class="loading-title">Graham Prouty Dashboard</div>
+            <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-mark">GP</div>
+            <div class="brand-text">
+                <div class="brand-name">Graham Prouty</div>
+                <div class="brand-sub">Personal Dashboard</div>
+            </div>
+        </div>
+        <nav class="nav-list">
+            <button class="nav-item active" data-section="morning">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                </span>
+                <span class="nav-label">Morning Start</span>
+            </button>
+            <button class="nav-item" data-section="daily">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </span>
+                <span class="nav-label">Daily Tracker</span>
+            </button>
+            <button class="nav-item" data-section="finance">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+                </span>
+                <span class="nav-label">Finance &amp; Study</span>
+            </button>
+            <button class="nav-item" data-section="disney">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.3 7.2 16.9l.9-5.4L4.2 7.7l5.4-.8L12 2z"/></svg>
+                </span>
+                <span class="nav-label">Disney Model</span>
+            </button>
+            <button class="nav-item" data-section="reflection">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </span>
+                <span class="nav-label">Reflection</span>
+            </button>
+            <button class="nav-item" data-section="blueprint">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg>
+                </span>
+                <span class="nav-label">Blueprint</span>
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="footer-quote">Consistency compounds.</div>
+        </div>
+    </aside>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="bnav-item active" data-section="morning" aria-label="Morning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button class="bnav-item" data-section="daily" aria-label="Daily">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </button>
+        <button class="bnav-item" data-section="finance" aria-label="Finance">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+        </button>
+        <button class="bnav-item" data-section="disney" aria-label="Disney">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.3 7.2 16.9l.9-5.4L4.2 7.7l5.4-.8L12 2z"/></svg>
+        </button>
+        <button class="bnav-item" data-section="reflection" aria-label="Reflection">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <button class="bnav-item" data-section="blueprint" aria-label="Blueprint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg>
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+
+        <!-- SECTION 1: MORNING START -->
+        <section class="section active" id="section-morning">
+            <header class="section-header">
+                <div class="eyebrow">Today</div>
+                <h1 class="section-title" id="greeting">Good morning, Graham</h1>
+                <div class="section-date" id="todayDate">Friday, May 15, 2026</div>
+            </header>
+
+            <div class="card quote-card">
+                <div class="quote-mark">&ldquo;</div>
+                <div class="quote-text" id="dailyQuote">Loading today's reminder...</div>
+                <div class="quote-author" id="dailyQuoteAuthor"></div>
+            </div>
+
+            <div class="grid two-col">
+                <div class="card">
+                    <div class="card-head">
+                        <h2 class="card-title">Today's Three Priorities</h2>
+                        <span class="card-sub">Win the day by winning the morning</span>
+                    </div>
+                    <div class="priority-list">
+                        <label class="check-row" data-key="priority1">
+                            <input type="checkbox" class="hide-check" />
+                            <span class="check-box"></span>
+                            <input type="text" class="priority-input" placeholder="Priority one..." data-text-key="priority1Text" />
+                        </label>
+                        <label class="check-row" data-key="priority2">
+                            <input type="checkbox" class="hide-check" />
+                            <span class="check-box"></span>
+                            <input type="text" class="priority-input" placeholder="Priority two..." data-text-key="priority2Text" />
+                        </label>
+                        <label class="check-row" data-key="priority3">
+                            <input type="checkbox" class="hide-check" />
+                            <span class="check-box"></span>
+                            <input type="text" class="priority-input" placeholder="Priority three..." data-text-key="priority3Text" />
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <h2 class="card-title">Faith</h2>
+                        <span class="card-sub">Stay grounded</span>
+                    </div>
+                    <label class="check-row" data-key="devotion">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="check-label">Daily devotion</span>
+                    </label>
+                    <label class="check-row" data-key="prayer">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="check-label">Morning prayer</span>
+                    </label>
+                    <div class="field">
+                        <label class="field-label">Devotion reflection</label>
+                        <textarea class="text-area small" rows="3" placeholder="A line on what stayed with you today..." data-text-key="devotionNote"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card glance-card">
+                <div class="glance-left">
+                    <div class="card-title">Today at a Glance</div>
+                    <div class="card-sub" id="glanceSub">Keep building.</div>
+                </div>
+                <div class="glance-right">
+                    <div class="glance-count">
+                        <span id="glanceDone">0</span>
+                        <span class="glance-sep">/</span>
+                        <span id="glanceTotal">9</span>
+                    </div>
+                    <div class="glance-label">Habits complete</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DAILY TRACKER -->
+        <section class="section" id="section-daily">
+            <header class="section-header">
+                <div class="eyebrow">Daily Tracker</div>
+                <h1 class="section-title">The Foundation</h1>
+                <div class="section-sub">Small daily moves. Compound results.</div>
+            </header>
+
+            <div class="grid two-col">
+                <div class="card">
+                    <div class="card-head">
+                        <h2 class="card-title">Body</h2>
+                        <span class="card-sub">Show up for yourself</span>
+                    </div>
+                    <label class="check-row icon-row" data-key="gym">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="row-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l-2 2M18 18l2-2M9 5l-3 3M19 15l-3 3M6 12l6-6M12 18l6-6"/><circle cx="7" cy="17" r="1.5"/><circle cx="17" cy="7" r="1.5"/></svg>
+                        </span>
+                        <span class="check-label">Gym session completed</span>
+                    </label>
+                    <label class="check-row icon-row" data-key="steps">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="row-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v8a3 3 0 0 0 3 3M17 20v-8a3 3 0 0 0-3-3"/></svg>
+                        </span>
+                        <span class="check-label">10,000 steps reached</span>
+                    </label>
+                    <label class="check-row icon-row" data-key="eatWell">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="row-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7 6 7 12 12 22M12 2c5 4 5 10 0 20"/></svg>
+                        </span>
+                        <span class="check-label">Ate well today (80/20)</span>
+                    </label>
+                    <label class="check-row icon-row" data-key="presented">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="row-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>
+                        </span>
+                        <span class="check-label">Looked &amp; presented your best</span>
+                    </label>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <h2 class="card-title">Relationships</h2>
+                        <span class="card-sub">Be present in every room</span>
+                    </div>
+                    <label class="check-row icon-row" data-key="family">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="row-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21V12h6v9"/></svg>
+                        </span>
+                        <span class="check-label">Did something for family</span>
+                    </label>
+                    <label class="check-row icon-row" data-key="friend">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="row-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M14 20c0-2 2-4 4-4s4 1.5 4 4"/></svg>
+                        </span>
+                        <span class="check-label">Connected with a friend</span>
+                    </label>
+                    <label class="check-row icon-row" data-key="positive">
+                        <input type="checkbox" class="hide-check" />
+                        <span class="check-box"></span>
+                        <span class="row-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 14s1 2 3 2 3-2 3-2M9 9h.01M15 9h.01"/></svg>
+                        </span>
+                        <span class="check-label">Positive attitude all day</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <h2 class="card-title">Daily Win</h2>
+                    <span class="card-sub">One thing worth remembering</span>
+                </div>
+                <div class="inline-input">
+                    <input type="text" id="winInput" class="text-input" placeholder="What was today's win?" />
+                    <button class="btn btn-primary" id="saveWinBtn">Save Win</button>
+                </div>
+                <div class="win-list" id="winList"></div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: FINANCE & STUDY -->
+        <section class="section" id="section-finance">
+            <header class="section-header">
+                <div class="eyebrow">Finance &amp; Study</div>
+                <h1 class="section-title">Sharpen the Edge</h1>
+                <div class="section-sub">45 minutes a day. Every day.</div>
+            </header>
+
+            <div class="card timer-card">
+                <div class="timer-display" id="timerDisplay">00:00:00</div>
+                <div class="timer-controls">
+                    <select id="topicSelect" class="select">
+                        <option value="Finance Fundamentals">Finance Fundamentals</option>
+                        <option value="Excel">Excel</option>
+                        <option value="AI Skills">AI Skills</option>
+                        <option value="Disney Modeling">Disney Modeling</option>
+                        <option value="CFA Prep">CFA Prep</option>
+                    </select>
+                    <div class="timer-buttons">
+                        <button class="btn btn-primary" id="startTimerBtn">Start</button>
+                        <button class="btn btn-ghost" id="pauseTimerBtn">Pause</button>
+                        <button class="btn btn-gold" id="logSessionBtn">Log Session</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid three-col">
+                <div class="card metric-card">
+                    <div class="metric-label">Total Study Time</div>
+                    <div class="metric-value" id="totalStudyTime">0h 0m</div>
+                </div>
+                <div class="card metric-card">
+                    <div class="metric-label">Sessions Completed</div>
+                    <div class="metric-value" id="totalSessions">0</div>
+                </div>
+                <div class="card metric-card">
+                    <div class="metric-label">Current Streak</div>
+                    <div class="metric-value">
+                        <span id="studyStreak">0</span>
+                        <span class="streak-flame" id="streakFlame">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s4 5 4 9a4 4 0 0 1-8 0c0-2 1-3 1-3s-2 2-2 5a6 6 0 0 0 12 0c0-5-7-11-7-11z"/></svg>
+                        </span>
+                        <span class="metric-suffix">days</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <h2 class="card-title">Topic Breakdown</h2>
+                    <span class="card-sub">Where the time is going</span>
+                </div>
+                <div class="topic-list" id="topicList"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <h2 class="card-title">Recent Sessions</h2>
+                    <span class="card-sub">Last five logged</span>
+                </div>
+                <div class="session-list" id="sessionList">
+                    <div class="empty-state">No sessions logged yet. Start the timer above.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: DISNEY MODEL -->
+        <section class="section" id="section-disney">
+            <header class="section-header">
+                <div class="eyebrow">Disney Model</div>
+                <h1 class="section-title">Walt Disney World Parks Financial Model</h1>
+                <div class="section-sub">Where passion meets the spreadsheet. A full DCF and valuation across all four parks.</div>
+            </header>
+
+            <div class="card overall-card">
+                <div class="overall-left">
+                    <div class="overall-label">Overall Project Completion</div>
+                    <div class="overall-percent"><span id="overallPercent">0</span>%</div>
+                </div>
+                <div class="overall-right">
+                    <div class="overall-bar"><div class="overall-bar-fill" id="overallBarFill"></div></div>
+                    <div class="overall-detail" id="overallDetail">0 of 32 sheets complete</div>
+                </div>
+            </div>
+
+            <div class="park-grid" id="parkGrid"></div>
+        </section>
+
+        <!-- SECTION 5: REFLECTION -->
+        <section class="section" id="section-reflection">
+            <header class="section-header">
+                <div class="eyebrow">Weekly Reflection</div>
+                <h1 class="section-title">The Mirror</h1>
+                <div class="section-sub">Honesty is the start of progress.</div>
+            </header>
+
+            <div class="card reflection-card">
+                <div class="reflection-question">Did this week reflect the person I am trying to become?</div>
+                <textarea id="reflectionInput" class="text-area" rows="6" placeholder="Write it out. The honest version."></textarea>
+                <div class="reflection-actions">
+                    <button class="btn btn-primary" id="saveReflectionBtn">Save Reflection</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <h2 class="card-title">Past Reflections</h2>
+                    <span class="card-sub">Last eight weeks</span>
+                </div>
+                <div class="timeline" id="reflectionTimeline">
+                    <div class="empty-state">Your first reflection will appear here.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: BLUEPRINT -->
+        <section class="section" id="section-blueprint">
+            <header class="section-header">
+                <div class="eyebrow">Blueprint</div>
+                <h1 class="section-title">My Blueprint</h1>
+                <div class="section-sub">Who Graham Prouty is becoming.</div>
+            </header>
+
+            <div class="blueprint-grid" id="blueprintGrid"></div>
+
+            <div class="card remember-card">
+                <div class="remember-label">Remember This</div>
+                <div class="remember-text">You are 22 years old building something real one day at a time. Finance is the safety net that makes every dream possible. Consistency compounds. Nobody sees the early mornings but you.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
