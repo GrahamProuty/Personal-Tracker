@@ -11,6 +11,9 @@
 </head>
 <body>
 
+    <!-- Background Canvas Animation -->
+    <canvas id="bgCanvas"></canvas>
+
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
@@ -111,6 +114,25 @@
                 <div class="quote-author" id="dailyQuoteAuthor"></div>
             </div>
 
+            <!-- AI DEVOTION CARD -->
+            <div class="card devotion-card" id="devotionCard">
+                <div class="devotion-header">
+                    <div class="devotion-badge">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s4 5 4 9a4 4 0 0 1-8 0c0-2 1-3 1-3s-2 2-2 5a6 6 0 0 0 12 0c0-5-7-11-7-11z"/></svg>
+                        Today's Devotion
+                    </div>
+                    <div class="devotion-date" id="devotionDate"></div>
+                </div>
+                <div id="devotionContent">
+                    <!-- Filled by JS -->
+                </div>
+                <div class="morning-reflection">
+                    <div class="morning-reflection-label">Morning Reflection</div>
+                    <div class="morning-reflection-hint">What are you carrying into today? This feeds tomorrow's devotion.</div>
+                    <textarea class="text-area small" id="morningReflectionInput" rows="3" placeholder="What's on your heart this morning..."></textarea>
+                </div>
+            </div>
+
             <div class="grid two-col">
                 <div class="card">
                     <div class="card-head">
@@ -144,17 +166,13 @@
                     <label class="check-row" data-key="devotion">
                         <input type="checkbox" class="hide-check" />
                         <span class="check-box"></span>
-                        <span class="check-label">Daily devotion</span>
+                        <span class="check-label">Read today's devotion</span>
                     </label>
                     <label class="check-row" data-key="prayer">
                         <input type="checkbox" class="hide-check" />
                         <span class="check-box"></span>
-                        <span class="check-label">Morning prayer</span>
+                        <span class="check-label">Prayed today's prayer</span>
                     </label>
-                    <div class="field">
-                        <label class="field-label">Devotion reflection</label>
-                        <textarea class="text-area small" rows="3" placeholder="A line on what stayed with you today..." data-text-key="devotionNote"></textarea>
-                    </div>
                 </div>
             </div>
 
@@ -358,23 +376,24 @@
         <!-- SECTION 5: REFLECTION -->
         <section class="section" id="section-reflection">
             <header class="section-header">
-                <div class="eyebrow">Weekly Reflection</div>
+                <div class="eyebrow">Evening Reflection</div>
                 <h1 class="section-title">The Mirror</h1>
                 <div class="section-sub">Honesty is the start of progress.</div>
             </header>
 
             <div class="card reflection-card">
-                <div class="reflection-question">Did this week reflect the person I am trying to become?</div>
-                <textarea id="reflectionInput" class="text-area" rows="6" placeholder="Write it out. The honest version."></textarea>
+                <div class="reflection-question">Did this day reflect the person I am trying to become?</div>
+                <textarea id="reflectionInput" class="text-area" rows="6" placeholder="Write it out. The honest version. This will shape tomorrow's devotion."></textarea>
                 <div class="reflection-actions">
-                    <button class="btn btn-primary" id="saveReflectionBtn">Save Reflection</button>
+                    <span class="reflection-ai-note">✦ Saving this generates tomorrow's personalized devotion</span>
+                    <button class="btn btn-primary" id="saveReflectionBtn">Save &amp; Generate Devotion</button>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-head">
                     <h2 class="card-title">Past Reflections</h2>
-                    <span class="card-sub">Last eight weeks</span>
+                    <span class="card-sub">Last eight entries</span>
                 </div>
                 <div class="timeline" id="reflectionTimeline">
                     <div class="empty-state">Your first reflection will appear here.</div>

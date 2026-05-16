@@ -66,9 +66,10 @@ const defaultState = () => ({
     daily: {
         priority1: false, priority2: false, priority3: false,
         priority1Text: '', priority2Text: '', priority3Text: '',
-        devotion: false, prayer: false, devotionNote: '',
+        devotion: false, prayer: false,
         gym: false, steps: false, eatWell: false, presented: false,
-        family: false, friend: false, positive: false
+        family: false, friend: false, positive: false,
+        morningReflection: ''
     },
     wins: [],
     study: {
@@ -83,7 +84,9 @@ const defaultState = () => ({
         hs: new Array(8).fill(false),
         ak: new Array(8).fill(false)
     },
-    reflections: []
+    reflections: [],
+    // AI devotion: generated content waiting for tomorrow morning
+    tomorrowDevotion: null  // { date, scripture, reference, body, prayer }
 });
 
 let state;
@@ -94,9 +97,11 @@ function loadState() {
         if (!raw) return defaultState();
         const parsed = JSON.parse(raw);
         const fresh = defaultState();
-        return { ...fresh, ...parsed,
+        return {
+            ...fresh, ...parsed,
             daily: { ...fresh.daily, ...(parsed.daily || {}) },
-            study: { ...fresh.study, ...(parsed.study || {}),
+            study: {
+                ...fresh.study, ...(parsed.study || {}),
                 topics: { ...fresh.study.topics, ...((parsed.study && parsed.study.topics) || {}) }
             },
             disney: { ...fresh.disney, ...(parsed.disney || {}) }
@@ -122,14 +127,14 @@ function todayKey() {
 
 function formatDateLong(dateInput) {
     const d = dateInput ? new Date(dateInput) : new Date();
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
 function formatDateShort(dateInput) {
     const d = new Date(dateInput);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
@@ -141,11 +146,81 @@ function dayDiff(a, b) {
 
 function checkMidnightReset() {
     if (state.lastDate !== todayKey()) {
+        // If there's a devotion queued for today, promote it
+        if (state.tomorrowDevotion && state.tomorrowDevotion.date === todayKey()) {
+            // Keep tomorrowDevotion — it will display as today's devotion
+        }
         const fresh = defaultState();
         state.daily = fresh.daily;
         state.lastDate = todayKey();
         saveState();
     }
+}
+
+/* ============================================
+   BACKGROUND CANVAS ANIMATION
+   ============================================ */
+
+function initCanvas() {
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let W, H, particles;
+
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+
+    function makeParticle() {
+        return {
+            x: Math.random() * W,
+            y: Math.random() * H,
+            r: Math.random() * 1.4 + 0.3,
+            vx: (Math.random() - 0.5) * 0.18,
+            vy: (Math.random() - 0.5) * 0.18,
+            alpha: Math.random() * 0.4 + 0.05
+        };
+    }
+
+    function init() {
+        resize();
+        particles = Array.from({ length: 80 }, makeParticle);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            // Alternate between gold and blue tint particles
+            ctx.fillStyle = `rgba(201, 168, 76, ${p.alpha})`;
+            ctx.fill();
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Wrap around edges
+            if (p.x < -2) p.x = W + 2;
+            if (p.x > W + 2) p.x = -2;
+            if (p.y < -2) p.y = H + 2;
+            if (p.y > H + 2) p.y = -2;
+        });
+
+        requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', () => {
+        resize();
+        // Reposition any out-of-bounds particles
+        particles.forEach(p => {
+            if (p.x > W) p.x = Math.random() * W;
+            if (p.y > H) p.y = Math.random() * H;
+        });
+    });
+
+    init();
+    draw();
 }
 
 /* ============================================
@@ -232,6 +307,151 @@ function updateGlance() {
 }
 
 /* ============================================
+   AI DEVOTION
+   ============================================ */
+
+function initDevotion() {
+    // Set date label
+    document.getElementById('devotionDate').textContent = formatDateLong();
+
+    // Load morning reflection input
+    const morningInput = document.getElementById('morningReflectionInput');
+    morningInput.value = state.daily.morningReflection || '';
+    morningInput.addEventListener('input', () => {
+        state.daily.morningReflection = morningInput.value;
+        saveState();
+    });
+
+    renderDevotion();
+}
+
+function renderDevotion() {
+    const container = document.getElementById('devotionContent');
+    const d = state.tomorrowDevotion;
+
+    // Check if there's a devotion ready for today
+    const todayStr = todayKey();
+    const hasToday = d && d.date === todayStr;
+    // Also show if it's from yesterday (user hasn't reset yet)
+    const hasRecent = d && dayDiff(d.date, todayStr) <= 1;
+
+    if (hasToday || hasRecent) {
+        container.innerHTML = `
+            <div class="devotion-scripture">${escapeHtml(d.scripture)}</div>
+            <div class="devotion-reference">${escapeHtml(d.reference)}</div>
+            <div class="devotion-body">${escapeHtml(d.body)}</div>
+            <div class="devotion-prayer">
+                <div class="devotion-prayer-label">Today's Prayer</div>
+                ${escapeHtml(d.prayer)}
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="devotion-empty">
+                <div class="devotion-empty-icon">✦</div>
+                <div>Your personalized devotion will appear here each morning.<br>
+                Write your evening reflection tonight to generate tomorrow's scripture and prayer.</div>
+            </div>
+        `;
+    }
+}
+
+async function generateDevotion(eveningReflection, morningReflection) {
+    const container = document.getElementById('devotionContent');
+    container.innerHTML = `
+        <div class="devotion-loading">
+            <div class="spinner"></div>
+            Generating your personalized devotion...
+        </div>
+    `;
+
+    // Switch to morning tab so user sees it
+    switchSection('morning');
+
+    const prompt = `You are a thoughtful, faith-based devotion writer for a 22-year-old Christian man named Graham Prouty. Graham is building a career in finance, is passionate about discipline, family, and faith, and values staying grounded and grateful.
+
+Based on Graham's reflections from today, write a personalized morning devotion for tomorrow.
+
+Graham's morning reflection (what he was carrying into today):
+"${morningReflection || 'Not provided'}"
+
+Graham's evening reflection (how the day went):
+"${eveningReflection}"
+
+Write a morning devotion with these exact sections, separated by the labels:
+
+SCRIPTURE:
+[A real Bible verse that speaks directly to what Graham is going through. Write the full verse text.]
+
+REFERENCE:
+[Book Chapter:Verse format, e.g. Philippians 4:13]
+
+DEVOTION:
+[3-4 sentences of warm, honest, grounded reflection connecting the scripture to Graham's specific situation. Speak to him directly. Mention faith, discipline, and gratitude where natural. No fluff.]
+
+PRAYER:
+[A sincere, personal prayer in first person that Graham can read aloud. 3-4 sentences. Should feel real, not generic.]
+
+Keep the tone warm but direct. Avoid clichés. Make it feel written specifically for Graham, not a template.`;
+
+    try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 1000,
+                messages: [{ role: 'user', content: prompt }]
+            })
+        });
+
+        const data = await response.json();
+        const text = data.content.map(c => c.text || '').join('');
+
+        // Parse the sections
+        const scripture = extractSection(text, 'SCRIPTURE', 'REFERENCE') || 'Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.';
+        const reference = extractSection(text, 'REFERENCE', 'DEVOTION') || 'Joshua 1:9';
+        const body = extractSection(text, 'DEVOTION', 'PRAYER') || 'Keep showing up. God sees the effort you put in when no one else is watching.';
+        const prayer = extractSection(text, 'PRAYER', null) || 'Lord, thank you for this day. Guide my steps tomorrow. Give me clarity, discipline, and a grateful heart. Amen.';
+
+        // Store for tomorrow morning (or today if generated late)
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowKey = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+
+        state.tomorrowDevotion = {
+            date: tomorrowKey,
+            scripture: scripture.trim(),
+            reference: reference.trim(),
+            body: body.trim(),
+            prayer: prayer.trim()
+        };
+        saveState();
+        renderDevotion();
+        toast('Tomorrow\'s devotion is ready.');
+
+    } catch (err) {
+        console.error('Devotion generation failed:', err);
+        container.innerHTML = `
+            <div class="devotion-empty">
+                <div class="devotion-empty-icon">⚠</div>
+                <div>Couldn't generate devotion right now. Your reflection was saved — try again later.</div>
+            </div>
+        `;
+        toast('Could not generate devotion. Reflection saved.');
+    }
+}
+
+function extractSection(text, startLabel, endLabel) {
+    const startIdx = text.indexOf(startLabel + ':');
+    if (startIdx === -1) return null;
+    const contentStart = startIdx + startLabel.length + 1;
+    const endIdx = endLabel ? text.indexOf(endLabel + ':', contentStart) : text.length;
+    const raw = endIdx === -1 ? text.slice(contentStart) : text.slice(contentStart, endIdx);
+    return raw.trim();
+}
+
+/* ============================================
    SECTION 2: WINS
    ============================================ */
 
@@ -306,20 +526,16 @@ function pauseTimer() {
 function logSession() {
     if (timerRunning) pauseTimer();
     const minutes = Math.floor(timerElapsed / 60000);
-    if (minutes < 1) {
-        toast('Need at least 1 minute to log.');
-        return;
-    }
+    if (minutes < 1) { toast('Need at least 1 minute to log.'); return; }
     const topic = document.getElementById('topicSelect').value;
     const today = todayKey();
     const session = { topic, minutes, date: today };
     state.study.sessions.unshift(session);
     state.study.topics[topic] = (state.study.topics[topic] || 0) + minutes;
 
-    // Streak
     if (state.study.lastSessionDate) {
         const diff = dayDiff(state.study.lastSessionDate, today);
-        if (diff === 0) { /* same day, keep streak */ }
+        if (diff === 0) { /* same day */ }
         else if (diff === 1) { state.study.streakDays += 1; }
         else { state.study.streakDays = 1; }
     } else {
@@ -346,10 +562,7 @@ function updateTimerDisplay(ms) {
 function checkStudyStreak() {
     if (!state.study.lastSessionDate) return;
     const diff = dayDiff(state.study.lastSessionDate, todayKey());
-    if (diff > 1) {
-        state.study.streakDays = 0;
-        saveState();
-    }
+    if (diff > 1) { state.study.streakDays = 0; saveState(); }
 }
 
 function renderStudy() {
@@ -438,9 +651,7 @@ function initDisney() {
 
 function updateOverall() {
     let total = 0;
-    PARKS.forEach(p => {
-        total += state.disney[p.id].filter(Boolean).length;
-    });
+    PARKS.forEach(p => { total += state.disney[p.id].filter(Boolean).length; });
     const pct = Math.round((total / 32) * 100);
     document.getElementById('overallPercent').textContent = pct;
     document.getElementById('overallBarFill').style.width = pct + '%';
@@ -452,16 +663,26 @@ function updateOverall() {
    ============================================ */
 
 function initReflection() {
-    document.getElementById('saveReflectionBtn').addEventListener('click', () => {
+    document.getElementById('saveReflectionBtn').addEventListener('click', async () => {
         const input = document.getElementById('reflectionInput');
         const text = input.value.trim();
         if (!text) { toast('Write something first.'); return; }
+
+        // Save the reflection
         state.reflections.unshift({ text, date: todayKey() });
         state.reflections = state.reflections.slice(0, 52);
-        input.value = '';
         saveState();
         renderReflections();
-        toast('Reflection saved.');
+
+        const morningReflection = state.daily.morningReflection || '';
+
+        // Clear the input
+        input.value = '';
+
+        toast('Reflection saved. Generating devotion...');
+
+        // Generate tomorrow's devotion using both reflections
+        await generateDevotion(text, morningReflection);
     });
     renderReflections();
 }
@@ -513,7 +734,7 @@ function toast(msg) {
     t.textContent = msg;
     t.classList.add('visible');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('visible'), 2400);
+    toastTimer = setTimeout(() => t.classList.remove('visible'), 2800);
 }
 
 /* ============================================
@@ -525,9 +746,11 @@ function init() {
     checkMidnightReset();
     checkStudyStreak();
 
+    initCanvas();
     initNav();
     initGreeting();
     initQuote();
+    initDevotion();
     initCheckRows();
     updateGlance();
     initWins();
@@ -537,17 +760,16 @@ function init() {
     initReflection();
     initBlueprint();
 
-    // Fade out loading screen
     setTimeout(() => {
         document.getElementById('loadingScreen').classList.add('hidden');
     }, 1000);
 
-    // Midnight watcher
     setInterval(() => {
         if (state.lastDate !== todayKey()) {
             checkMidnightReset();
             initCheckRows();
             updateGlance();
+            renderDevotion();
         }
     }, 60000);
 }
